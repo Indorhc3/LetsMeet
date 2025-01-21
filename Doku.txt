@@ -1,0 +1,219 @@
+1. Hauptzweck der Datenbank
+
+    Die Datenbank dient dazu, Benutzer zu verbinden und Interaktionen zwischen ihnen zu ermöglichen. 
+    Sie kombiniert soziale Features wie Freundschaften, Nachrichten, und Likes mit individuellen Interessen und Präferenzen, wie Hobbys und Bewertungen. 
+    Dies deutet darauf hin, dass die Plattform den Aufbau von Beziehungen auf Grundlage gemeinsamer Interessen fördert.
+
+2. Datenbankstruktur   
+    
+2.1 Tabellenbeschreibung:    
+    
+    User - Beschreibung: Speichert Informationen über Benutzer.
+        user_id (Primärschlüssel): Eindeutige Identifikation eines Benutzers.
+        email, password: Anmeldeinformationen des Benutzers.
+        first_name, last_name: Persönliche Daten des Benutzers.
+        gender, interested_in: Angaben zur Identität und Präferenzen.
+        registration_date, last_updated: Zeitstempel zur Nachverfolgung der Kontodaten.
+
+    Friendship - Beschreibung: Verwalten der Freundschaftsbeziehungen zwischen Benutzern.
+        friendship_id (Primärschlüssel): Eindeutige Identifikation einer Freundschaft.
+        user_id_1, user_id_2: Verknüpfen zwei Benutzer, die Freunde sind.
+        status: Status der Freundschaft (z. B. "bestätigt", "ausstehend").
+        created_at: Zeitstempel, wann die Freundschaft erstellt wurde.
+
+    Like - Beschreibung: Speichert Likes zwischen Benutzern (z. B. bei Dating-Apps).
+        like_id (Primärschlüssel): Eindeutige Identifikation eines Likes.
+        sender_id: Benutzer, der den Like sendet.
+        receiver_id: Benutzer, der den Like erhält.
+        status: Status des Likes (z. B. "akzeptiert", "ignoriert").
+        timestamp: Zeitpunkt, zu dem der Like gesendet wurde.
+
+    Message - Beschreibung: Speichert Nachrichten, die zwischen Benutzern gesendet werden.
+        message_id (Primärschlüssel): Eindeutige Identifikation einer Nachricht.
+        sender_id: Benutzer, der die Nachricht sendet.
+        receiver_id: Benutzer, der die Nachricht erhält.
+        content: Inhalt der Nachricht.
+        timestamp: Zeitpunkt, zu dem die Nachricht gesendet wurde.
+        conversation_id: Gruppiert Nachrichten zu einer Konversation.
+
+    Hobby - Beschreibung: Speichert allgemeine Informationen über Hobbys.
+        hobby_id (Primärschlüssel): Eindeutige Identifikation eines Hobbys.
+        hobby_name: Name des Hobbys.
+        hobby_category: Kategorie, zu der das Hobby gehört (z. B. "Sport", "Kunst").
+
+    Userhobby - Beschreibung: Verknüpft Benutzer mit ihren Hobbys.
+        user_id: Verknüpft zu einem Benutzer.
+        hobby_id: Verknüpft zu einem Hobby.
+        priority: Priorität oder Vorlieben für ein Hobby (z. B. Lieblingshobby).
+
+    HobbyPreference - Beschreibung: Speichert die Bewertungen von Hobbys durch Benutzer.
+        preference_id (Primärschlüssel): Eindeutige Identifikation einer Bewertung.
+        user_id: Benutzer, der das Hobby bewertet.
+        hobby_id: Hobby, das bewertet wird.
+        rating: Bewertung des Hobbys (z. B. Skala von 1 bis 5).
+
+    Image - Beschreibung: Speichert Bilder, die Benutzer hochladen.
+        image_id (Primärschlüssel): Eindeutige Identifikation eines Bildes.
+        user_id: Verknüpft zu einem Benutzer.
+        data: Bilddaten (z. B. als Blob gespeichert).
+        description: Beschreibung des Bildes.
+        updated_at: Zeitstempel, wann das Bild zuletzt aktualisiert wurde.
+        is_profile_image: Gibt an, ob es sich um ein Profilbild handelt.
+
+    Profile - Beschreibung: Verknüpft Benutzer mit ihrem Profil.
+        profile_id (Primärschlüssel): Eindeutige Identifikation eines Profils.
+        user_id: Verknüpft zu einem Benutzer.
+        profile_image_id: Verknüpft zu einem Bild, das als Profilbild dient.
+
+2.2 Beziehungen zwischen den Tabellen
+
+    User ↔ Friendship:
+        Beziehungstyp: 1:N (ein Benutzer kann mehrere Freundschaften haben).
+        Beschreibung: user_id_1 und user_id_2 in Friendship verweisen auf user_id in User.
+
+    User ↔ Like:
+        Beziehungstyp: 1:N (ein Benutzer kann viele Likes senden und empfangen).
+        Beschreibung: sender_id und receiver_id in Like verweisen auf user_id in User.
+
+    User ↔ Message:
+        Beziehungstyp: 1:N (ein Benutzer kann viele Nachrichten senden und empfangen).
+        Beschreibung: sender_id und receiver_id in Message verweisen auf user_id in User.
+
+    User ↔ Userhobby:
+        Beziehungstyp: N:M (ein Benutzer kann mehrere Hobbys haben, und ein Hobby kann mehreren Benutzern gehören).
+        Beschreibung: user_id in Userhobby verweist auf user_id in User.
+
+    Hobby ↔ Userhobby:
+        Beziehungstyp: N:M (ein Hobby kann zu mehreren Benutzern gehören).
+        Beschreibung: hobby_id in Userhobby verweist auf hobby_id in Hobby.
+
+    User ↔ HobbyPreference:
+        Beziehungstyp: 1:N (ein Benutzer kann viele Bewertungen abgeben).
+        Beschreibung: user_id in HobbyPreference verweist auf user_id in User.
+
+    Hobby ↔ HobbyPreference:
+        Beziehungstyp: 1:N (ein Hobby kann von mehreren Benutzern bewertet werden).
+        Beschreibung: hobby_id in HobbyPreference verweist auf hobby_id in Hobby.
+
+    User ↔ Image:
+        Beziehungstyp: 1:N (ein Benutzer kann mehrere Bilder hochladen).
+        Beschreibung: user_id in Image verweist auf user_id in User.
+
+    Profile ↔ User:
+        Beziehungstyp: 1:1 (ein Benutzer hat ein Profil).
+        Beschreibung: user_id in Profile verweist auf user_id in User.
+
+    Profile ↔ Image:
+        Beziehungstyp: 1:1 (ein Profil kann ein Profilbild haben).
+        Beschreibung: profile_image_id in Profile verweist auf image_id in Image.
+
+2.3 Tabellenübersicht
+
+    Table User {
+        user_id int [pk]
+        email varchar
+        password varchar
+        first_name varchar
+        last_name varchar
+        address varchar
+        phone varchar
+        gender varchar
+        interested_in varchar
+        date_of_birth date
+        registration_date datetime
+        last_updated datetime
+    }
+
+    Table Friendship {
+        friendship_id int [pk]
+        user_id_1 int [ref: > User.user_id]
+        user_id_2 int [ref: > User.user_id]
+        status varchar
+        created_at datetime
+    }
+
+    Table Hobby {
+        hobby_id int [pk]
+        hobby_name varchar
+        hobby_category varchar
+    }
+
+    Table Userhobby {
+        user_id int [pk, ref: > User.user_id]
+        hobby_id int [pk, ref: > Hobby.hobby_id]
+        priority int
+    }
+
+    Table HobbyPreference {
+        preference_id int [pk]
+        user_id int [ref: > User.user_id]
+        hobby_id int [ref: > Hobby.hobby_id]
+        rating int
+    }
+
+    Table Like {
+        like_id int [pk]
+        sender_id int [ref: > User.user_id]
+        receiver_id int [ref: > User.user_id]
+        status varchar
+        timestamp datetime
+    }
+
+    Table Message {
+        message_id int [pk]
+        sender_id int [ref: > User.user_id]
+        receiver_id int [ref: > User.user_id]
+        content text
+        timestamp datetime
+        conversation_id int
+    }
+
+    Table Image {
+        image_id int [pk]
+        user_id int [ref: > User.user_id]
+        data blob
+        description varchar
+        updated_at datetime
+        is_profile_image bool
+    }
+
+    Table Profile {
+        profile_id int [pk]
+        user_id int [ref: > User.user_id]
+        profile_image_id int [ref: > Image.image_id]
+    }
+
+2.4 Zusammenfassung
+        Die Datenbankstruktur enthält Tabellen mit klar definierten Primärschlüsseln, Fremdschlüsseln und Attributen. 
+        Die Beziehungen zwischen den Tabellen bilden eine vollständige logische Struktur ab, die in der 3. Normalform (3NF) ist. 
+        Sie ist optimiert für Abfragen zu Benutzern, deren Freundschaften, Nachrichten, Hobbys und Bildern.
+
+3. Datenschutz
+
+    Rechtsgrundlage: Es muss eine der untengennanten Rechtsgrundlagen vorliegen.
+        Einwilligung der betroffenen Person
+        Erfüllung eines Vertrags
+        Erfüllung einer rechtlichen Verpflichtung
+        Schutz lebenswichtiger Interessen
+        Wahrnehmung einer Aufgabe im öffentlichen Interesse
+        Wahrung berechtigter Interessen des Verantwortlichen
+
+    Zweckbindung: Die Daten dürfen nur für den ursprünglich festgelegten Zweck verarbeitet werden.
+
+    Datenminimierung: Es dürfen nur die für den Zweck erforderlichen Daten erhoben und verarbeitet werden.
+
+    Speicherbegrenzung: Die Daten dürfen nur so lange gespeichert werden, wie es für den Zweck erforderlich ist.
+
+    Transparenz: Die betroffenen Personen müssen über die Datenverarbeitung informiert werden.
+
+    Technische und organisatorische Maßnahmen: Es müssen angemessene Sicherheitsmaßnahmen zum Schutz der Daten implementiert werden.
+
+    Aus Sicht des Datenschutzes liegen hier folgende Arten von Daten vor:
+        Personenbezogene Daten in der Excel-Tabelle
+        Likes und Nachrichten in der MongoDB
+        Hobbydaten in der XML-Datei 
+
+    Diese Daten müssen geschützt werden mithilfe von:    
+        Verschlüsselung: Sensible Daten sollten verschlüsselt gespeichert werden.
+        Zugriffskontrollen: Implementierung von Zugriffsrechten und Authentifizierung.
+        Pseudonymisierung: Wenn möglich, sollten Daten pseudonymisiert werden.
