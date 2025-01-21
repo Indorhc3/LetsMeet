@@ -1,13 +1,5 @@
-1. Hauptzweck der Datenbank
-
-    Die Datenbank dient dazu, Benutzer zu verbinden und Interaktionen zwischen ihnen zu ermöglichen. 
-    Sie kombiniert soziale Features wie Freundschaften, Nachrichten, und Likes mit individuellen Interessen und Präferenzen, wie Hobbys und Bewertungen. 
-    Dies deutet darauf hin, dass die Plattform den Aufbau von Beziehungen auf Grundlage gemeinsamer Interessen fördert.
-
-2. Datenbankstruktur   
-    
-2.1 Tabellenbeschreibung:    
-    
+### Konzeptuelles Datenmodell
+   
     User - Beschreibung: Speichert Informationen über Benutzer.
         user_id (Primärschlüssel): Eindeutige Identifikation eines Benutzers.
         email, password: Anmeldeinformationen des Benutzers.
@@ -65,7 +57,7 @@
         user_id: Verknüpft zu einem Benutzer.
         profile_image_id: Verknüpft zu einem Bild, das als Profilbild dient.
 
-2.2 Beziehungen zwischen den Tabellen
+### Beziehungen zwischen den Tabellen
 
     User ↔ Friendship:
         Beziehungstyp: 1:N (ein Benutzer kann mehrere Freundschaften haben).
@@ -107,113 +99,3 @@
         Beziehungstyp: 1:1 (ein Profil kann ein Profilbild haben).
         Beschreibung: profile_image_id in Profile verweist auf image_id in Image.
 
-2.3 Tabellenübersicht
-
-    Table User {
-        user_id int [pk]
-        email varchar
-        password varchar
-        first_name varchar
-        last_name varchar
-        address varchar
-        phone varchar
-        gender varchar
-        interested_in varchar
-        date_of_birth date
-        registration_date datetime
-        last_updated datetime
-    }
-
-    Table Friendship {
-        friendship_id int [pk]
-        user_id_1 int [ref: > User.user_id]
-        user_id_2 int [ref: > User.user_id]
-        status varchar
-        created_at datetime
-    }
-
-    Table Hobby {
-        hobby_id int [pk]
-        hobby_name varchar
-        hobby_category varchar
-    }
-
-    Table Userhobby {
-        user_id int [pk, ref: > User.user_id]
-        hobby_id int [pk, ref: > Hobby.hobby_id]
-        priority int
-    }
-
-    Table HobbyPreference {
-        preference_id int [pk]
-        user_id int [ref: > User.user_id]
-        hobby_id int [ref: > Hobby.hobby_id]
-        rating int
-    }
-
-    Table Like {
-        like_id int [pk]
-        sender_id int [ref: > User.user_id]
-        receiver_id int [ref: > User.user_id]
-        status varchar
-        timestamp datetime
-    }
-
-    Table Message {
-        message_id int [pk]
-        sender_id int [ref: > User.user_id]
-        receiver_id int [ref: > User.user_id]
-        content text
-        timestamp datetime
-        conversation_id int
-    }
-
-    Table Image {
-        image_id int [pk]
-        user_id int [ref: > User.user_id]
-        data blob
-        description varchar
-        updated_at datetime
-        is_profile_image bool
-    }
-
-    Table Profile {
-        profile_id int [pk]
-        user_id int [ref: > User.user_id]
-        profile_image_id int [ref: > Image.image_id]
-    }
-
-2.4 Zusammenfassung
-        Die Datenbankstruktur enthält Tabellen mit klar definierten Primärschlüsseln, Fremdschlüsseln und Attributen. 
-        Die Beziehungen zwischen den Tabellen bilden eine vollständige logische Struktur ab, die in der 3. Normalform (3NF) ist. 
-        Sie ist optimiert für Abfragen zu Benutzern, deren Freundschaften, Nachrichten, Hobbys und Bildern.
-
-3. Datenschutz
-
-    Rechtsgrundlage: Es muss eine der untengennanten Rechtsgrundlagen vorliegen.
-        Einwilligung der betroffenen Person
-        Erfüllung eines Vertrags
-        Erfüllung einer rechtlichen Verpflichtung
-        Schutz lebenswichtiger Interessen
-        Wahrnehmung einer Aufgabe im öffentlichen Interesse
-        Wahrung berechtigter Interessen des Verantwortlichen
-
-    Zweckbindung: Die Daten dürfen nur für den ursprünglich festgelegten Zweck verarbeitet werden.
-
-    Datenminimierung: Es dürfen nur die für den Zweck erforderlichen Daten erhoben und verarbeitet werden.
-
-    Speicherbegrenzung: Die Daten dürfen nur so lange gespeichert werden, wie es für den Zweck erforderlich ist.
-
-    Transparenz: Die betroffenen Personen müssen über die Datenverarbeitung informiert werden.
-
-    Technische und organisatorische Maßnahmen: Es müssen angemessene Sicherheitsmaßnahmen zum Schutz der Daten implementiert werden.
-
-    Aus Sicht des Datenschutzes liegen hier folgende Arten von Daten vor:
-        Personenbezogene Daten in der Excel-Tabelle
-        Likes und Nachrichten in der MongoDB
-        Hobbydaten in der XML-Datei 
-
-    Diese Daten müssen geschützt werden mithilfe von:    
-        Verschlüsselung: Sensible Daten sollten verschlüsselt gespeichert werden.
-        Zugriffskontrollen: Implementierung von Zugriffsrechten und Authentifizierung.
-        Pseudonymisierung: Wenn möglich, sollten Daten pseudonymisiert werden.
